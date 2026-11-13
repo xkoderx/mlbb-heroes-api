@@ -1,0 +1,1 @@
+{"description":"API pública con los héroes de Mobile Legends: Bang Bang (Moonton). En español, sin llave ni registro.","license":"MIT","name":"mlbb-heroes-api","scripts":{"dev":"npm --prefix server run dev","postinstall":"npm --prefix server install","start":"npm --prefix server start"},"version":"1.0.0"}

@@ -1,0 +1,1 @@
+{"dependencies":{"cors":"^2.8.5","express":"^4.21.2"},"description":"API pública con los héroes de Mobile Legends: Bang Bang (Moonton). En español, sin llave ni registro.","license":"MIT","main":"index.js","name":"mlbb-heroes-api-server","scripts":{"dev":"node --watch index.js","start":"node index.js"},"version":"1.0.0"}

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MLBB Heroes API — Documentación</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; margin: 0; background: #0f172a; color: #e2e8f0; line-height: 1.6; }
+  header { background: #1e293b; padding: 2.5rem 1.5rem; text-align: center; border-bottom: 3px solid #38bdf8; }
+  header h1 { margin: 0; font-size: 2rem; }
+  header h1 span { color: #38bdf8; }
+  header p { margin: 0.5rem auto 0; max-width: 640px; color: #94a3b8; }
+  main { max-width: 860px; margin: 0 auto; padding: 2rem 1.5rem 3rem; }
+  h2 { color: #38bdf8; border-bottom: 1px solid #334155; padding-bottom: 0.4rem; margin-top: 2.5rem; }
+  h3 { margin-bottom: 0.3rem; }
+  h3 code { font-size: 1rem; }
+  code { background: #1e293b; padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.9em; color: #7dd3fc; }
+  pre { background: #020617; border: 1px solid #334155; border-radius: 8px; padding: 1rem; overflow-x: auto; font-size: 0.85rem; }
+  pre code { background: none; padding: 0; color: #e2e8f0; }
+  .tag { display: inline-block; background: #38bdf8; color: #082f49; font-weight: bold; font-size: 0.75rem; padding: 0.15rem 0.5rem; border-radius: 4px; margin-right: 0.5rem; vertical-align: middle; }
+  .endpoint { background: #1e293b; border-radius: 10px; padding: 1rem 1.25rem; margin-bottom: 1.25rem; }
+  .endpoint p { margin: 0.4rem 0; color: #cbd5e1; }
+  table { width: 100%; border-collapse: collapse; margin: 0.75rem 0; }
+  th, td { text-align: left; padding: 0.5rem 0.75rem; border-bottom: 1px solid #334155; }
+  th { color: #94a3b8; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.04em; }
+  footer { text-align: center; color: #64748b; font-size: 0.85rem; padding: 2rem 1.5rem; border-top: 1px solid #334155; }
+  a { color: #38bdf8; }
+  .nota { background: #422006; border: 1px solid #a16207; color: #fde68a; border-radius: 8px; padding: 0.9rem 1.1rem; }
+  .prueba { margin-top: 0.6rem; }
+  .prueba input { background: #020617; border: 1px solid #334155; color: #e2e8f0; border-radius: 6px; padding: 0.45rem 0.6rem; width: min(420px, 100%); font-family: monospace; }
+  .prueba button { background: #38bdf8; color: #082f49; border: none; border-radius: 6px; padding: 0.5rem 1rem; font-weight: bold; cursor: pointer; margin-left: 0.4rem; }
+  .prueba button:hover { background: #7dd3fc; }
+  #salida { white-space: pre-wrap; word-break: break-word; }
+</style>
+</head>
+<body>
+<header>
+  <h1>MLBB <span>Heroes API</span></h1>
+  <p>API pública con los héroes de Mobile Legends: Bang Bang (Moonton).
+  En español, sin llave ni registro. Datos basados en
+  <a href="https://github.com/p3hndrx/MLBB-API" target="_blank" rel="noopener">p3hndrx/MLBB-API</a>.</p>
+</header>
+
+<main>
+  <h2>Cómo se usa</h2>
+  <p>Todos los endpoints responden en JSON. No hace falta registrarse ni usar llave.
+  Activa CORS, así que puedes llamarla directamente desde el navegador.</p>
+  <pre><code>curl https://TU-DOMINIO/api/heroes?role=Marksman</code></pre>
+
+  <h2>Endpoints</h2>
+
+  <div class="endpoint">
+    <h3><span class="tag">GET</span> <code>/</code></h3>
+    <p>Información de la API: nombre, versión y lista de endpoints.</p>
+  </div>
+
+  <div class="endpoint">
+    <h3><span class="tag">GET</span> <code>/api/heroes</code></h3>
+    <p>Lista de héroes, con filtros y paginación.</p>
+    <table>
+      <tr><th>Parámetro</th><th>Qué hace</th><th>Ejemplo</th></tr>
+      <tr><td><code>role</code></td><td>Filtra por rol</td><td><code>?role=Marksman</code></td></tr>
+      <tr><td><code>lane</code></td><td>Filtra por línea</td><td><code>?lane=gold lane</code></td></tr>
+      <tr><td><code>search</code></td><td>Busca por nombre (sin distinguir mayúsculas)</td><td><code>?search=miya</code></td></tr>
+      <tr><td><code>limit</code></td><td>Resultados por página (por defecto 50, máximo 130)</td><td><code>?limit=10</code></td></tr>
+      <tr><td><code>page</code></td><td>Número de página (por defecto 1)</td><td><code>?page=2</code></td></tr>
+    </table>
+    <p>La respuesta incluye <code>total</code>, <code>page</code>, <code>limit</code>, <code>totalPages</code> y el arreglo <code>heroes</code>.</p>
+    <pre><code>GET /api/heroes?role=Marksman&amp;limit=2
+
+{
+  "total": 23,
+  "page": 1,
+  "limit": 2,
+  "totalPages": 12,
+  "heroes": [
+    { "id": "h001", "slug": "miya", "hero_name": "Miya", "class": "Marksman", ... },
+    ...
+  ]
+}</code></pre>
+  </div>
+
+  <div class="endpoint">
+    <h3><span class="tag">GET</span> <code>/api/heroes/:id</code></h3>
+    <p>Un héroe por <strong>id</strong> (<code>h001</code>), por <strong>mlid</strong> (<code>1</code>) o por <strong>slug</strong> (<code>miya</code>).</p>
+    <pre><code>GET /api/heroes/miya
+
+{
+  "id": "h001",
+  "mlid": "1",
+  "uid": "miya",
+  "slug": "miya",
+  "hero_name": "Miya",
+  "class": "Marksman",
+  "laning": ["gold lane"],
+  "portrait": "https://akmweb.youngjoygame.com/...",
+  "hero_icon": "miya.png",
+  "release_year": null,
+  "skills": [
+    { "skill_name": "Moon Blessing", "type": "passive", "cooldown": "null", "description": "..." },
+    ...
+  ]
+}</code></pre>
+    <p>Si no existe, responde 404: <code>{ "error": "Héroe no encontrado" }</code></p>
+  </div>
+
+  <div class="endpoint">
+    <h3><span class="tag">GET</span> <code>/api/roles</code></h3>
+    <p>Los 6 roles del juego con la cantidad de héroes de cada uno.</p>
+    <pre><code>GET /api/roles
+
+{ "total": 6, "roles": [ { "role": "Fighter", "heroes": 44 }, ... ] }</code></pre>
+  </div>
+
+  <div class="endpoint">
+    <h3><span class="tag">GET</span> <code>/api/lanes</code></h3>
+    <p>Las líneas del juego con la cantidad de héroes de cada una.</p>
+    <pre><code>GET /api/lanes
+
+{ "total": 5, "lanes": [ { "lane": "mid lane", "heroes": 28 }, ... ] }</code></pre>
+  </div>
+
+  <div class="endpoint">
+    <h3><span class="tag">GET</span> <code>/api/status</code></h3>
+    <p>Estado de la API y cantidad de héroes en el dataset.</p>
+    <pre><code>GET /api/status
+
+{ "status": "ok", "heroes": 133, "version": "1.0.0", "fuente": "p3hndrx/MLBB-API" }</code></pre>
+  </div>
+
+  <h2>Valores posibles</h2>
+  <p><strong>Roles:</strong> <code>Tank</code>, <code>Fighter</code>, <code>Assassin</code>, <code>Mage</code>, <code>Marksman</code>, <code>Support</code>.
+  Algunos héroes tienen dos roles (por ejemplo <code>"Tank, Mage"</code>) y aparecen en ambos.</p>
+  <p><strong>Líneas:</strong> <code>gold lane</code>, <code>mid lane</code>, <code>exp lane</code>, <code>jungle</code>, <code>roam</code>.
+  También funcionan las formas cortas: <code>gold</code>, <code>mid</code>, <code>exp</code>.</p>
+
+  <h2>Pruébala aquí mismo</h2>
+  <p>Escribe una ruta y la API te responde en vivo (funciona cuando la API está corriendo en este mismo origen).</p>
+  <div class="prueba">
+    <input id="ruta" value="/api/heroes?role=Marksman&limit=3" spellcheck="false">
+    <button onclick="probar()">Probar</button>
+  </div>
+  <pre><code id="salida">Pulsa "Probar" para ver la respuesta.</code></pre>
+
+  <h2>Ejemplo en JavaScript</h2>
+  <pre><code>const res = await fetch('/api/heroes?search=miya');
+const data = await res.json();
+console.log(data.heroes[0].hero_name); // "Miya"</code></pre>
+
+  <div class="nota">
+    <strong>Nota:</strong> proyecto no oficial y sin afiliación con Moonton. Los datos del
+    juego son © Moonton y la base de datos se usa con fines educativos y para la comunidad,
+    con crédito a <a href="https://github.com/p3hndrx/MLBB-API" target="_blank" rel="noopener">p3hndrx/MLBB-API</a>.
+  </div>
+</main>
+
+<footer>
+  MLBB Heroes API v1.0.0 · Hecha por Erick Michel Deloera ·
+  <a href="https://github.com/xkoderx/mlbb-heroes-api" target="_blank" rel="noopener">Código en GitHub</a>
+</footer>
+
+<script>
+async function probar() {
+  const ruta = document.getElementById('ruta').value.trim() || '/api/status';
+  const salida = document.getElementById('salida');
+  salida.textContent = 'Cargando...';
+  try {
+    const res = await fetch(ruta);
+    const texto = await res.text();
+    let bonito = texto;
+    try { bonito = JSON.stringify(JSON.parse(texto), null, 2); } catch (e) { /* no es JSON */ }
+    salida.textContent = 'HTTP ' + res.status + '\n' + bonito;
+  } catch (err) {
+    salida.textContent = 'Error: ' + err.message + '\n(¿La API está corriendo?)';
+  }
+}
+</script>
+</body>
+</html>
